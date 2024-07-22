@@ -15,7 +15,7 @@ export type InputProps = {
 > &
   InputHTMLAttributes<HTMLInputElement>
 
-export type ImageProps = InputProps & {type: "image"}
+export type ImageFieldProps = InputProps & {type: "image"}
 
 export type SelectProps = {
   label?: string
@@ -33,4 +33,4 @@ export type SelectProps = {
   )
 
 
-export type AnyField = InputProps | SelectProps | ImageProps
+export type AnyField = InputProps | SelectProps | ImageFieldProps
