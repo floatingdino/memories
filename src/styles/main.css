@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    -webkit-font-smoothing: antialiased; /* https://www.joshwcomeau.com/css/custom-css-reset/#digit-font-smoothing */
+    @apply bg-white text-black dark:bg-black dark:text-white;
+  }
+
+  :root {
+    --bg-color: theme("colors.white");
+  }
+
+  html {
+    @apply transition-colors duration-150 bg-global-bg;
+  }
+}
+
+@layer utilities {
+  .vbg-gray-200 {
+    --bg-color: theme("colors.gray.200");
+  }
+}
