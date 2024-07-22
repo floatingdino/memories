@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
 const config: Config = {
   content: [
@@ -15,6 +15,7 @@ const config: Config = {
         "Segoe UI",
         "sans-serif",
       ],
+      serif: ["Georgia", "ui-serif", "serif"],
       monospace: ["SF Mono", "monospace"],
     },
     extend: {
@@ -50,5 +51,5 @@ const config: Config = {
     },
   },
   plugins: [],
-};
-export default config;
+}
+export default config
