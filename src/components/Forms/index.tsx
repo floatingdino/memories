@@ -7,10 +7,12 @@ import Select from "./Select"
 import { AnyField } from "./types"
 import Textarea from "./Textarea"
 import Checkbox from "./Checkbox"
+import ImageField from "./Image"
 
 const FIELDS = {
   text: Input,
   textarea: Textarea,
+  image: ImageField,
   select: Select,
   checkbox: Checkbox,
 }
