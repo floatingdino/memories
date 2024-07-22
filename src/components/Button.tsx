@@ -3,14 +3,13 @@ import clsx from "clsx"
 
 import createStyle, { CustomTagArgs } from "@josephmark/createstyle"
 import Link from "next/link"
+import { P } from "@/styles/Type"
 
-export const ButtonEl = createStyle(
-  "a",
-  "inline-flex bg-black text-white text-[1.0625rem] tracking-[-0.04em] font-semibold"
-)
+export const ButtonEl = createStyle("a", clsx("inline-flex", P.toString()))
 
 const THEMES = {
-  primary: "bg-primary-500 active:bg-primary-400 text-white disabled:bg-gray-600 disabled:text-gray-300",
+  primary:
+    "bg-primary-500 active:bg-primary-400 text-white disabled:bg-gray-600 disabled:text-gray-300",
   inverted: "bg-black bg-opacity-0 text-primary-500 active:bg-opacity-10",
   secondary: "bg-white border border-black text-black",
   destructive: "bg-error-500 active:bg-error-400 text-white",
