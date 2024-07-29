@@ -5,6 +5,7 @@ import Image from "next/image"
 import { H2, P } from "@/styles/Type"
 import clsx from "clsx"
 import Link from "next/link"
+import getImageUrl from "@/utils/getImageUrl"
 
 const CardEl = createStyle("article", "relative", { style: { aspectRatio: 1 } })
 
@@ -12,16 +13,7 @@ export const MemoryCard: FC<{ memory: Memory }> = ({
   memory: { id, file, memory, rememberer },
 }) => (
   <CardEl>
-    {file && (
-      <Image
-        src={new URL(
-          `storage/v1/object/public/${file}`,
-          process.env.NEXT_PUBLIC_SUPABASE_URL
-        ).toString()}
-        alt=""
-        fill
-      />
-    )}
+    {file && <Image src={getImageUrl(file)} alt="" fill />}
     <div
       className={clsx(
         "absolute inset-0 flex flex-col justify-center gap-5 p-3",
@@ -31,7 +23,7 @@ export const MemoryCard: FC<{ memory: Memory }> = ({
       {memory && (
         <H2
           as="blockquote"
-          className="font-serif h-0 grow overflow-hidden overflow-ellipsis italic"
+          className="h-0 grow overflow-hidden overflow-ellipsis font-serif italic"
         >
           &ldquo;
           {memory}
