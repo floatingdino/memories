@@ -7,7 +7,16 @@ import { FC, HTMLAttributes } from "react"
 
 export const FeatureMemoryCard: FC<
   Omit<HTMLAttributes<HTMLDivElement>, keyof Memory> & Memory
-> = ({ className, file, memory, rememberer, id: _id, ...props }) => {
+> = ({
+  className,
+  file,
+  memory,
+  rememberer,
+  id: _id,
+  created_at: _created_at,
+  memory_type: _memory_type,
+  ...props
+}) => {
   return (
     <figure
       className={clsx("absolute inset-0 h-full w-full", className)}
@@ -26,7 +35,7 @@ export const FeatureMemoryCard: FC<
             "text-white"
           )}
         >
-          <div className="flex flex-col justify-center">
+          <div className="flex grow flex-col justify-center">
             <H2 as="p" className="font-serif italic">
               &ldquo;{memory}&rdquo;
             </H2>

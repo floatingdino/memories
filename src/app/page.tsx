@@ -18,7 +18,7 @@ export default function Home() {
       .then(({ data }) => data)
   )
 
-  const [currentOffset, setCurrentOffset] = useState(2)
+  const [currentOffset, setCurrentOffset] = useState(0)
 
   useLayoutEffect(() => {
     if (!data) {
@@ -40,8 +40,8 @@ export default function Home() {
           {...mem}
           key={mem.id}
           className={clsx(
-            idx !== currentOffset && "opacity-0",
-            "transition duration-500"
+            idx !== currentOffset && "pointer-events-none invisible opacity-0",
+            "transition-[opacity,visibility] duration-500"
           )}
         />
       ))}
