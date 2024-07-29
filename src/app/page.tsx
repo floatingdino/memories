@@ -3,7 +3,9 @@ import { Suspense } from "react"
 import Slideshow from "./SlideShow"
 import { P } from "@/styles/Type"
 
-const WEB_ROOT = process.env.NEXT_PUBLIC_VERCEL_URL || "http://localhost:3000"
+const WEB_ROOT = process.env.NEXT_PUBLIC_VERCEL_URL
+  ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+  : "http://localhost:3000"
 
 export default function Home() {
   return (
