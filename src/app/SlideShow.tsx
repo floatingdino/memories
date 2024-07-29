@@ -10,7 +10,7 @@ import useSWR from "swr"
 const SLIDE_DURATION = 15_000
 
 export default function Slideshow() {
-  const { data } = useSWR<any>("memories", (table: string) =>
+  const { data, mutate } = useSWR<any>("memories", (table: string) =>
     supabase
       .from(table)
       .select("*")
@@ -32,6 +32,19 @@ export default function Slideshow() {
       clearInterval(interval)
     }
   }, [currentOffset, data])
+
+  useLayoutEffect(() => {
+    const channel = supabase
+      .channel("memories")
+      .on("postgres_changes", { event: "INSERT", schema: "public" }, () => {
+        mutate()
+      })
+      .subscribe()
+
+    return () => {
+      channel.unsubscribe()
+    }
+  }, [])
 
   return (
     <>
