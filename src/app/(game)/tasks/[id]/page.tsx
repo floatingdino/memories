@@ -42,7 +42,7 @@ export default async function TaskHome({ params }: { params: { id: string } }) {
 
   const [{ data: allTasks }, { data: allGuests }, { data: allGuesses }] =
     await Promise.all([
-      supabase.from("tasks").select("id, name"),
+      supabase.from("tasks").select("id, name").order("id"),
       supabase.from("guests").select("id, name, costume"),
       supabase
         .from("guesses")

@@ -12,10 +12,10 @@ export const TaskPanel: FC<{
   id: number | string
   tasks: any[]
   guests: any[]
-  guesses: Guess
+  guesses?: Guess
 }> = ({ id, tasks, guests, guesses: _guesses }) => {
-  const [recordId, setRecordId] = useState(_guesses.id)
-  const [guesses, setGuesses] = useState(_guesses.guess)
+  const [recordId, setRecordId] = useState(_guesses?.id)
+  const [guesses, setGuesses] = useState(_guesses?.guess || {})
 
   const onChange = useCallback(
     (id: number) => (value: string) => {
