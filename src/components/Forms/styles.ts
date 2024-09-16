@@ -11,8 +11,8 @@ export const InputEl = createStyle(
   "input",
   clsx(
     "peer block",
-    "p-4 w-full",
-    "bg-white rounded-md",
+    "w-full p-4",
+    "rounded-md bg-white text-black",
     "text-[1rem] leading-[1.25]",
     "placeholder-black placeholder-opacity-50",
     "appearance-none text-left"

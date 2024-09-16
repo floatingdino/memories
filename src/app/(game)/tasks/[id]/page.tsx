@@ -10,6 +10,7 @@ import { PointsPanel } from "./PointsPanel"
 import { TASK_ID_COOKIE } from "./const"
 import CookieSetter from "./CookieSetter"
 import { TaskPanel } from "./TaskPanel"
+import { GroupPanel } from "../GroupPanel"
 
 export default async function TaskHome({ params }) {
   const { id } = params
@@ -39,22 +40,27 @@ export default async function TaskHome({ params }) {
     notFound()
   }
 
-  const [{ data: allTasks }, { data: allGuests }, { data: allGuesses }] =
-    await Promise.all([
-      supabase.from("tasks").select("id, name"),
-      supabase.from("guests").select("id, name, costume"),
-      supabase.from("guesses").select("id, guest, guess").eq("guest", id),
-    ])
+  const [
+    { data: allTasks },
+    { data: allGuests },
+    {
+      data: [allGuesses],
+    },
+  ] = await Promise.all([
+    supabase.from("tasks").select("id, name"),
+    supabase.from("guests").select("id, name, costume"),
+    supabase.from("guesses").select("id, guest, guess").eq("guest", id),
+  ])
 
   return (
     <Container className="py-10">
       <FormBGManager />
       {!cookies().has(TASK_ID_COOKIE) && <CookieSetter id={id} />}
       <H1 className="mb-5">{task.name}</H1>
-      <H5 className="mb-2 text-gray-800">Goal:</H5>
-      <div className="mb-5 rounded-md bg-white px-3 py-2">
+      <H5 className="mb-2 opacity-80">Goal:</H5>
+      <GroupPanel className="mb-5">
         <P>{task.description}</P>
-      </div>
+      </GroupPanel>
       <PointsPanel goals={task.goals.sort((a, b) => a.id - b.id)} />
 
       <TaskPanel

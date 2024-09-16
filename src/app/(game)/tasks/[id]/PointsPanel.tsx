@@ -46,7 +46,7 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
 
   return (
     <>
-      <H5 className="mb-2 flex justify-between text-gray-800">
+      <H5 className="mb-2 flex justify-between opacity-80">
         Current Points: <strong>{currentPoints}</strong>
       </H5>
       <GroupPanel>
@@ -61,7 +61,7 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
                 .fill(0)
                 .map((_, i) => ({ value: i.toString() }))}
               onChange={onChange(goal.id)}
-              className="ml-1 rounded bg-gray-100 px-3 py-4"
+              className="ml-1 rounded bg-gray-100 px-3 py-4 dark:bg-gray-900"
             />
           </div>
         ))}

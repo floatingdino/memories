@@ -26,7 +26,7 @@ export const Spinner: FC<
           }
         }
       },
-      { threshold: 0.7 }
+      { threshold: 0.7, root: wrapperRef.current }
     )
     const elements = wrapperRef.current?.querySelectorAll("div")
     elements?.forEach((el) => observer.observe(el))

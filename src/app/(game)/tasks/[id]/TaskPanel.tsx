@@ -6,12 +6,13 @@ import { Spinner } from "@/components/Forms/Spinner"
 import { useEffect, useState, useCallback } from "react"
 import supabase from "@/utils/supabaseClient"
 import { FC } from "react"
+import { Guess } from "@/types/Guess"
 
 export const TaskPanel: FC<{
   id: number
   tasks: any[]
   guests: any[]
-  guesses: any
+  guesses: Guess
 }> = ({ id, tasks, guests, guesses: _guesses }) => {
   const [recordId, setRecordId] = useState(_guesses.id)
   const [guesses, setGuesses] = useState(_guesses.guess)
