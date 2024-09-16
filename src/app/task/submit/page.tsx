@@ -6,7 +6,10 @@ import { FormBGManager } from "@/components/FormBGManager"
 import Field from "@/components/Forms"
 import { FormContextProvider } from "@/components/Forms/context/FormContext"
 import useForm from "@/components/Forms/hooks/useForm"
+import { H1 } from "@/styles/Type"
+import supabase from "@/utils/supabaseClient"
 import get from "lodash/get"
+import { useCallback, FormEventHandler } from "react"
 
 const required = true
 
@@ -23,7 +26,7 @@ const FORM_DEFINITION = [
     type: "textarea",
   },
   {
-    name: "task_points",
+    name: "goals",
     type: "repeater",
     label: "Goals",
     recordName: "Goal",
@@ -43,10 +46,31 @@ const FORM_DEFINITION = [
 ]
 
 const Form = () => {
-  const { formDefinition, isLoading, form, onChange } = useForm()
+  const { formDefinition, setIsLoading, isLoading, form, onChange } = useForm()
+
+  const onSubmit = useCallback<FormEventHandler<HTMLFormElement>>(async (e) => {
+    e.preventDefault()
+    setIsLoading(true)
+    try {
+      const goals: any[] = await Promise.all(
+        (form.goals as any[]).map((goal) => {
+          return supabase.from("goals").insert(goal)
+        })
+      )
+      const task = await supabase.from("tasks").insert({
+        ...form,
+        goals: goals.map(({ data }) => data?.id),
+      })
+      console.log(task)
+    } catch (e) {
+      console.error(e)
+    }
+
+    setIsLoading(false)
+  }, [])
 
   return (
-    <form className="flex flex-col gap-4 py-10">
+    <form className="flex flex-col gap-4 py-10" onSubmit={onSubmit}>
       {formDefinition.map((field) => (
         <Field
           key={field.name}
@@ -71,6 +95,7 @@ export default function SubmitTask() {
   return (
     <Container>
       <FormBGManager />
+      <H1 className="mt-10">Add a task</H1>
       <FormContextProvider formDefinition={FORM_DEFINITION}>
         <Form />
       </FormContextProvider>
