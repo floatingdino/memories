@@ -3,13 +3,17 @@
 import Image from "next/image"
 import { ChangeEventHandler, FC, useCallback, useState } from "react"
 import Input from "./Input"
-import { ImageFieldProps } from "./types"
+import { ImageFieldProps } from "./types/Form"
 
-export const ImageField: FC<Omit<ImageFieldProps, "type">> = (props) => {
+export const ImageField: FC<Omit<ImageFieldProps, "type">> = ({
+  value,
+  ...props
+}) => {
   const [previewURL, setPreviewURL] = useState<string | null>(null)
   const onChange = useCallback<ChangeEventHandler<HTMLInputElement>>((e) => {
     const file = e.currentTarget.files?.[0]
     setPreviewURL(file ? URL.createObjectURL(file) : null)
+    props?.onChange?.(e)
   }, [])
   return (
     <div className="flex flex-col gap-2">

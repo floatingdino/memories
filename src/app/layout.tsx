@@ -17,8 +17,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="flex min-h-screen flex-col">
         {children}
+        <div className="grow" />
         {cookies().has(TASK_ID_COOKIE) && (
           <NavBar task={cookies().get(TASK_ID_COOKIE)!.value} />
         )}
