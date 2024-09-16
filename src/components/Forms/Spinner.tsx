@@ -11,7 +11,7 @@ import { useRef } from "react"
 export const Spinner: FC<
   Omit<HTMLAttributes<HTMLElement>, "onChange"> & {
     value?: string
-    onChange?: (v: number) => void
+    onChange?: (v: string) => void
     options: { value: string; label?: string }[]
   }
 > = ({ value, onChange = () => {}, options, className, ...props }) => {
@@ -22,7 +22,7 @@ export const Spinner: FC<
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            onChange(parseInt(entry.target.getAttribute("data-value")!))
+            onChange(entry.target.getAttribute("data-value")!)
           }
         }
       },

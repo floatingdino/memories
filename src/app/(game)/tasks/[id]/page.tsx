@@ -39,10 +39,12 @@ export default async function TaskHome({ params }) {
     notFound()
   }
 
-  const [{ data: allTasks }, { data: allGuests }] = await Promise.all([
-    supabase.from("tasks").select("id, name"),
-    supabase.from("guests").select("id, name, costume"),
-  ])
+  const [{ data: allTasks }, { data: allGuests }, { data: allGuesses }] =
+    await Promise.all([
+      supabase.from("tasks").select("id, name"),
+      supabase.from("guests").select("id, name, costume"),
+      supabase.from("guesses").select("id, guest, guess").eq("guest", id),
+    ])
 
   return (
     <Container className="py-10">
@@ -55,7 +57,12 @@ export default async function TaskHome({ params }) {
       </div>
       <PointsPanel goals={task.goals.sort((a, b) => a.id - b.id)} />
 
-      <TaskPanel id={id} tasks={allTasks} guests={allGuests} />
+      <TaskPanel
+        id={id}
+        tasks={allTasks}
+        guests={allGuests}
+        guesses={allGuesses}
+      />
     </Container>
   )
 }

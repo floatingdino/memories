@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation"
 
 export const NavBar = ({ task }) => {
   const pathname = usePathname()
-  console.log(pathname)
   return (
     <nav className="sticky bottom-0 left-0 flex w-full gap-1 border-t border-gray-300 bg-white p-1">
       <Link
