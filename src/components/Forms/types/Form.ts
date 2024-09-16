@@ -11,6 +11,7 @@ import type {
   ValidatorFunction,
   ValidatorValue,
 } from "@/components/Forms/utils/validator"
+import { CustomTagArgs } from "@josephmark/createstyle"
 
 export type FormValue =
   | string
@@ -22,7 +23,7 @@ export type RepeaterFormValue = Record<string, FormValue>[]
 
 export type FieldProps<
   T = FormValue,
-  EL = InputHTMLAttributes<HTMLInputElement>,
+  EL = CustomTagArgs<HTMLInputElement>,
 > = Omit<EL, "value" | "type"> & {
   name: string
   label?: ReactNode
@@ -31,7 +32,11 @@ export type FieldProps<
   validators?: ValidatorFunction[]
   type?: InputHTMLAttributes<HTMLInputElement>["type"]
 }
-export type ImageFieldProps = FieldProps & { type: "image" }
+export type ImageFieldProps = FieldProps<FileList> & { type: "image" }
+export type TextareaFieldProps = FieldProps<string> & {
+  type: "textarea"
+  rows?: number
+}
 
 export type SelectProps = {
   label?: string
@@ -60,6 +65,7 @@ export type AllFieldProps =
   | ImageFieldProps
   | RepeaterFieldProps
   | SelectProps
+  | TextareaFieldProps
   | CustomFieldProps
 
 export type ValidityState = Record<string, ValidatorValue[]>

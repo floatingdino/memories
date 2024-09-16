@@ -1,9 +1,9 @@
 import { forwardRef, useId } from "react"
 
-import type { InputProps } from "./types"
+import type { FieldProps } from "./types/Form"
 import { InputEl } from "./styles"
 
-export const Input = forwardRef<HTMLElement, InputProps>(
+export const Input = forwardRef<HTMLElement, FieldProps<string>>(
   ({ name, className, ...props }, ref) => {
     const hash = useId()
     const id =

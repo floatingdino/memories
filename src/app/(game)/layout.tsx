@@ -1,8 +1,9 @@
+import { ReactNode } from "react"
 import { cookies } from "next/headers"
 import { NavBar } from "../NavBar"
 import { TASK_ID_COOKIE } from "./tasks/[id]/const"
 
-export default function GameLayout({ children }) {
+export default function GameLayout({ children }: { children: ReactNode }) {
   return (
     <>
       {children}

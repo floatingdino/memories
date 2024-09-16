@@ -4,7 +4,7 @@ import clsx from "clsx"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-export const NavBar = ({ task }) => {
+export const NavBar = ({ task }: { task: string | number }) => {
   const pathname = usePathname()
   return (
     <nav className="sticky bottom-0 left-0 flex w-full gap-1 border-t border-gray-300 bg-white p-1 dark:border-gray-800 dark:bg-black">

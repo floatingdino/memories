@@ -7,7 +7,7 @@ export default async function TaskList() {
 
   return (
     <Container className="pt-10">
-      <H1 className="mb-5">Select your guesses</H1>
+      <H1 className="mb-5">Task List</H1>
       <P as="ol" className="list-decimal pb-5 pl-7">
         {tasks?.map((task) => <li key={task.name}>{task.name}</li>)}
       </P>

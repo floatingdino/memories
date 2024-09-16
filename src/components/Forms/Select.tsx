@@ -1,7 +1,7 @@
 import ChevronDownIcon from "@/icons/ChevronDown"
 import clsx from "clsx"
 import { InputEl } from "./styles"
-import { SelectProps } from "./types"
+import { SelectProps } from "./types/Form"
 
 export const Select = ({
   className,
@@ -10,8 +10,8 @@ export const Select = ({
   ...props
 }: SelectProps) => {
   return (
-    <div className={clsx(className, "relative bg-paper-white flex")}>
-      <ChevronDownIcon className="absolute right-2 lg:right-5 top-1/2 -translate-y-1/2 pointer-events-none" />
+    <div className={clsx(className, "bg-paper-white relative flex")}>
+      <ChevronDownIcon className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 lg:right-5" />
       <InputEl as="select" {...props}>
         {placeholder && (
           <option value="" disabled>

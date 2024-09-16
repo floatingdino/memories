@@ -1,3 +1,5 @@
+"use client"
+
 /* eslint-disable import/no-cycle */
 import createStyle from "@josephmark/createstyle"
 import get from "lodash/get"

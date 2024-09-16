@@ -1,7 +1,10 @@
 import { cookies } from "next/headers"
 import { TASK_ID_COOKIE } from "../const"
 
-export async function GET(request: Request, { params }) {
+export async function GET(
+  request: Request,
+  { params }: { params: { id: string } }
+) {
   const newCookies = cookies().set(TASK_ID_COOKIE, params.id)
 
   return new Response(null, {

@@ -1,9 +1,9 @@
 import { forwardRef, useId } from "react"
 
-import type { InputProps } from "./types"
+import type { TextareaFieldProps } from "./types/Form"
 import { InputEl } from "./styles"
 
-export const Textarea = forwardRef<HTMLElement, InputProps>(
+export const Textarea = forwardRef<HTMLElement, TextareaFieldProps>(
   ({ name, className, ...props }, ref) => {
     const hash = useId()
     const id =
@@ -18,7 +18,7 @@ export const Textarea = forwardRef<HTMLElement, InputProps>(
         name={name}
         ref={ref}
         className={className}
-        {...props}
+        {...(props)}
       />
     )
   }
