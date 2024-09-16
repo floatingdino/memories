@@ -5,9 +5,16 @@ import { GroupPanel } from "../GroupPanel"
 import { Spinner } from "@/components/Forms/Spinner"
 import { useEffect, useState, useCallback } from "react"
 import supabase from "@/utils/supabaseClient"
+import { FC } from "react"
 
-export const TaskPanel = ({ id, tasks, guests, guesses: _guesses }) => {
-  const [guesses, setGuesses] = useState(_guesses.guesses)
+export const TaskPanel: FC<{
+  id: number
+  tasks: any[]
+  guests: any[]
+  guesses: any
+}> = ({ id, tasks, guests, guesses: _guesses }) => {
+  const [recordId, setRecordId] = useState(_guesses.id)
+  const [guesses, setGuesses] = useState(_guesses.guess)
 
   const onChange = useCallback(
     (id: number) => (value: string) => {
@@ -20,8 +27,11 @@ export const TaskPanel = ({ id, tasks, guests, guesses: _guesses }) => {
     const timeout = setTimeout(() => {
       return supabase
         .from("guesses")
-        .upsert({ id: _guesses.id, guest: id, guess: guesses })
-        .then(console.log)
+        .upsert({ id: recordId, guest: id, guess: guesses })
+        .select()
+        .then(({ data }) => {
+          setRecordId(data![0].id)
+        })
     }, 1500)
 
     return () => clearTimeout(timeout)
@@ -29,7 +39,7 @@ export const TaskPanel = ({ id, tasks, guests, guesses: _guesses }) => {
 
   return (
     <>
-      <H5 className="mb-3 mt-5 text-gray-800">Guess a task</H5>
+      <H5 className="mb-2 mt-5 opacity-80">Guess a task:</H5>
 
       <GroupPanel>
         {tasks.map((task) => (
@@ -46,7 +56,7 @@ export const TaskPanel = ({ id, tasks, guests, guesses: _guesses }) => {
                   label: name,
                 })),
               ]}
-              className="ml-1 rounded bg-gray-100 px-3 py-4"
+              className="ml-1 rounded bg-gray-100 px-3 py-4 dark:bg-gray-900"
             />
           </div>
         ))}
