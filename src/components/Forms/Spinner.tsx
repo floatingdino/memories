@@ -10,11 +10,11 @@ import { useRef } from "react"
 
 export const Spinner: FC<
   Omit<HTMLAttributes<HTMLElement>, "onChange"> & {
-    value?: number
+    value?: string
     onChange?: (v: number) => void
-    max?: number
+    options: { value: string; label?: string }[]
   }
-> = ({ value, onChange = () => {}, max = 99, className, ...props }) => {
+> = ({ value, onChange = () => {}, options, className, ...props }) => {
   const wrapperRef = useRef<HTMLElement>(null)
 
   useLayoutEffect(() => {
@@ -37,7 +37,9 @@ export const Spinner: FC<
     const element = wrapperRef.current?.querySelector<HTMLElement>(
       `div[data-value="${value}"]`
     )
-    console.log(element)
+    if (!element || !wrapperRef.current) {
+      return
+    }
     wrapperRef.current!.scrollTop = element!.offsetTop
   }, [])
   return (
@@ -51,18 +53,16 @@ export const Spinner: FC<
       ref={wrapperRef}
       {...props}
     >
-      {Array(max)
-        .fill(0)
-        .map((_, i) => (
-          <div
-            key={i}
-            className={clsx("snap-center", value !== i && "opacity-40")}
-            style={{ paddingBlock: "0.1875rem" }} //3px
-            data-value={i}
-          >
-            {i}
-          </div>
-        ))}
+      {options.map(({ value: optionValue, label }, i) => (
+        <div
+          key={i}
+          className={clsx("snap-center", value !== optionValue && "opacity-40")}
+          style={{ paddingBlock: "0.1875rem" }} //3px
+          data-value={optionValue}
+        >
+          {label ?? optionValue}
+        </div>
+      ))}
     </H5>
   )
 }

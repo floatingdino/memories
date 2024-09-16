@@ -9,6 +9,7 @@ import { notFound } from "next/navigation"
 import { PointsPanel } from "./PointsPanel"
 import { TASK_ID_COOKIE } from "./const"
 import CookieSetter from "./CookieSetter"
+import { TaskPanel } from "./TaskPanel"
 
 export default async function TaskHome({ params }) {
   const { id } = params
@@ -38,6 +39,11 @@ export default async function TaskHome({ params }) {
     notFound()
   }
 
+  const [{ data: allTasks }, { data: allGuests }] = await Promise.all([
+    supabase.from("tasks").select("id, name"),
+    supabase.from("guests").select("id, name, costume"),
+  ])
+
   return (
     <Container className="py-10">
       <FormBGManager />
@@ -48,6 +54,8 @@ export default async function TaskHome({ params }) {
         <P>{task.description}</P>
       </div>
       <PointsPanel goals={task.goals.sort((a, b) => a.id - b.id)} />
+
+      <TaskPanel id={id} tasks={allTasks} guests={allGuests} />
     </Container>
   )
 }

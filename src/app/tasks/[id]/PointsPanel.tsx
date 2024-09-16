@@ -8,6 +8,7 @@ import { useCallback } from "react"
 import { useEffect } from "react"
 import { FC } from "react"
 import { useState } from "react"
+import { GroupPanel } from "../GroupPanel"
 
 export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
   const [completions, setCompletions] = useState(
@@ -48,23 +49,25 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
       <H5 className="mb-2 flex justify-between text-gray-800">
         Current Points: <strong>{currentPoints}</strong>
       </H5>
-      <div className="rounded-md bg-white px-3">
+      <GroupPanel>
         {goals.map((goal) => (
-          <div className="group pt-4" key={goal.id}>
-            <div className="-mb-3 -mr-2 -mt-3 flex items-center">
-              <H5>{goal.description}</H5>
-              <div className="grow" />
-              <H5 as="div">&times;</H5>
-              <Spinner
-                value={completions[goal.id]}
-                onChange={onChange(goal.id)}
-                className="ml-1 rounded bg-gray-100 px-3 py-4"
-              />
-            </div>
-            <hr className="-mr-3 mt-4 border-gray-300 group-last:border-transparent" />
+          <div key={goal.id} className="-mb-3 -mr-2 -mt-3 flex items-center">
+            <H5>{goal.description}</H5>
+            <div className="grow" />
+            <H5 as="div">&times;</H5>
+            <Spinner
+              value={completions[goal.id].toString()}
+              options={Array(99)
+                .fill(0)
+                .map((_, i) => ({ value: i.toString() }))}
+              onChange={onChange(goal.id)}
+              className="ml-1 rounded bg-gray-100 px-3 py-4"
+            />
           </div>
         ))}
-      </div>
+      </GroupPanel>
+      {/* <div className="rounded-md bg-white px-3">
+      </div> */}
     </>
   )
 }
