@@ -1,13 +1,13 @@
 /* eslint-disable import/no-cycle */
-import dynamic from "next/dynamic"
 import { FC } from "react"
 import { P } from "@/styles/Type"
 import Input from "./Input"
 import Select from "./Select"
-import { AnyField } from "./types"
 import Textarea from "./Textarea"
 import Checkbox from "./Checkbox"
 import ImageField from "./Image"
+import { AllFieldProps } from "./types/Form"
+import RepeaterField from "./Repeater"
 
 const FIELDS = {
   text: Input,
@@ -15,15 +15,22 @@ const FIELDS = {
   image: ImageField,
   select: Select,
   checkbox: Checkbox,
+  repeater: RepeaterField,
 }
 
-export const Field: FC<Partial<AnyField>> = ({ type = "text", ...props }) => {
-  const FormField = FIELDS?.[type as keyof typeof FIELDS] || Input
+export const Field: FC<Partial<AllFieldProps>> = ({
+  type = "text",
+  ...props
+}) => {
+  const FormField =
+    typeof type === "function"
+      ? type
+      : FIELDS?.[type as keyof typeof FIELDS] || Input
 
   return (
     <label className="block" htmlFor={props.id}>
       {props.label && (
-        <P as="span" className="inline-block mb-2">
+        <P as="span" className="mb-2 inline-block">
           {props.label}
         </P>
       )}

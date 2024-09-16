@@ -20,7 +20,7 @@ const SIZES = {
   square: "p-3",
 }
 
-type ButtonProps = {
+export type ButtonProps = {
   theme?: keyof typeof THEMES
   size?: keyof typeof SIZES
 } & Omit<CustomTagArgs<HTMLAnchorElement>, "size">
