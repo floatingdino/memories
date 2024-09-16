@@ -9,7 +9,7 @@ import { FC } from "react"
 import { Guess } from "@/types/Guess"
 
 export const TaskPanel: FC<{
-  id: number
+  id: number | string
   tasks: any[]
   guests: any[]
   guesses: Guess

@@ -12,7 +12,7 @@ import CookieSetter from "./CookieSetter"
 import { TaskPanel } from "./TaskPanel"
 import { GroupPanel } from "../GroupPanel"
 
-export default async function TaskHome({ params }) {
+export default async function TaskHome({ params }: { params: { id: string } }) {
   const { id } = params
   if (
     cookies().has(TASK_ID_COOKIE) &&
@@ -40,17 +40,16 @@ export default async function TaskHome({ params }) {
     notFound()
   }
 
-  const [
-    { data: allTasks },
-    { data: allGuests },
-    {
-      data: [allGuesses],
-    },
-  ] = await Promise.all([
-    supabase.from("tasks").select("id, name"),
-    supabase.from("guests").select("id, name, costume"),
-    supabase.from("guesses").select("id, guest, guess").eq("guest", id),
-  ])
+  const [{ data: allTasks }, { data: allGuests }, { data: allGuesses }] =
+    await Promise.all([
+      supabase.from("tasks").select("id, name"),
+      supabase.from("guests").select("id, name, costume"),
+      supabase
+        .from("guesses")
+        .select("id, guest, guess")
+        .eq("guest", id)
+        .maybeSingle(),
+    ])
 
   return (
     <Container className="py-10">
@@ -64,10 +63,10 @@ export default async function TaskHome({ params }) {
       <PointsPanel goals={task.goals.sort((a, b) => a.id - b.id)} />
 
       <TaskPanel
-        id={id}
-        tasks={allTasks}
-        guests={allGuests}
-        guesses={allGuesses}
+        id={id!}
+        tasks={allTasks!}
+        guests={allGuests!}
+        guesses={allGuesses!}
       />
     </Container>
   )
