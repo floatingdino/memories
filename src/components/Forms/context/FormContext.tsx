@@ -35,8 +35,6 @@ export type FormContextValues = {
   setForm: Dispatch<SetStateAction<FormState>>
   formDefinition: AllFieldProps[]
   setFormDefinition: Dispatch<SetStateAction<AllFieldProps[]>>
-  page: number
-  setPage: Dispatch<SetStateAction<number>>
   onChange: ChangeEventHandler<HTMLInputElement>
   validityState: ValidityState
   isDirty: boolean
@@ -50,8 +48,6 @@ export const MultiPageFormContext = createContext<FormContextValues>({
   setForm: () => {},
   formDefinition: [],
   setFormDefinition: () => {},
-  page: 0,
-  setPage: () => {},
   onChange: () => {},
   validityState: {},
   isDirty: false,
@@ -91,7 +87,6 @@ export const FormContextProvider: FC<{
 
   const [form, setForm] = useState<FormState>(defaultFormState)
 
-  const [page, setPage] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
 
   const onChange = useCallback<ChangeEventHandler<HTMLInputElement>>((e) => {
@@ -153,8 +148,6 @@ export const FormContextProvider: FC<{
       setForm,
       formDefinition,
       setFormDefinition,
-      page,
-      setPage,
       onChange,
       validityState,
       isDirty,
@@ -165,7 +158,6 @@ export const FormContextProvider: FC<{
     [
       form,
       formDefinition,
-      page,
       onChange,
       validityState,
       isDirty,

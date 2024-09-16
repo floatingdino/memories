@@ -10,6 +10,7 @@ import { getDefaultStateFromDefinition } from "@/components/Forms/utils/formUtil
 
 import Field from "."
 import { P } from "@/styles/Type"
+import { useRef } from "react"
 
 const RepeaterWrapper = createStyle("div", "flex flex-col gap-5")
 
@@ -32,13 +33,21 @@ export const RepeaterField: FC<RepeaterFieldProps> = ({
   type: _type,
   ...props
 }) => {
+  const wrapperRef = useRef<HTMLElement>(null)
   const { setForm } = useForm()
 
   const addNewRecord = useCallback(() => {
-    setForm((f) => ({
-      ...f,
-      [name]: [...(f[name] as RepeaterValue), {}],
-    }))
+    setForm((f) => {
+      const newValue = [...(f[name] as RepeaterValue), {}]
+      const inputs =
+        wrapperRef.current?.querySelectorAll<HTMLElement>("input, textarea")
+      const target = inputs?.[(newValue.length - 1) * fields.length + 1]
+      target?.focus?.()
+      return {
+        ...f,
+        [name]: newValue,
+      }
+    })
   }, [fields, name, setForm])
 
   const removeRecord = useCallback<MouseEventHandler<HTMLButtonElement>>(
@@ -58,7 +67,7 @@ export const RepeaterField: FC<RepeaterFieldProps> = ({
     <div className="w-full">
       <div className="flex w-full gap-2">
         <div className="border-2 border-l border-dashed border-gray-300" />
-        <RepeaterWrapper className="grow">
+        <RepeaterWrapper className="grow" ref={wrapperRef}>
           {value.map((v, i) => (
             <Fragment key={i}>
               {i > 0 && (
@@ -92,7 +101,6 @@ export const RepeaterField: FC<RepeaterFieldProps> = ({
               as="button"
               type="button"
               theme="secondary"
-              leadingIcon="plus"
               onClick={addNewRecord}
               style={{ alignSelf: "flex-start" }}
             >

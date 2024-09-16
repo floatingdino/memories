@@ -6,9 +6,11 @@ import { FormBGManager } from "@/components/FormBGManager"
 import Field from "@/components/Forms"
 import { FormContextProvider } from "@/components/Forms/context/FormContext"
 import useForm from "@/components/Forms/hooks/useForm"
+import { getDefaultStateFromDefinition } from "@/components/Forms/utils/formUtils"
 import { H1 } from "@/styles/Type"
 import supabase from "@/utils/supabaseClient"
 import get from "lodash/get"
+import { useRef } from "react"
 import { useCallback, FormEventHandler } from "react"
 
 const required = true
@@ -46,31 +48,42 @@ const FORM_DEFINITION = [
 ]
 
 const Form = () => {
-  const { formDefinition, setIsLoading, isLoading, form, onChange } = useForm()
+  const formRef = useRef<HTMLFormElement>(null)
+  const { formDefinition, setIsLoading, isLoading, form, setForm, onChange } =
+    useForm()
+  const onSubmit = useCallback<FormEventHandler<HTMLFormElement>>(
+    async (e) => {
+      e.preventDefault()
+      setIsLoading(true)
+      console.log(form)
+      try {
+        const { goals: _goals, ...payload } = form
+        const task = await supabase.from("tasks").insert(payload).select("id")
+        await Promise.all(
+          (_goals as any[]).map((goal) => {
+            return supabase
+              .from("goals")
+              .insert({ ...goal, task: task?.data?.[0].id })
+              .select("id")
+          })
+        )
+        setForm(getDefaultStateFromDefinition(formDefinition))
+        formRef.current!.querySelector("input")!.focus()
+      } catch (e) {
+        console.error(e)
+      }
 
-  const onSubmit = useCallback<FormEventHandler<HTMLFormElement>>(async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    try {
-      const goals: any[] = await Promise.all(
-        (form.goals as any[]).map((goal) => {
-          return supabase.from("goals").insert(goal)
-        })
-      )
-      const task = await supabase.from("tasks").insert({
-        ...form,
-        goals: goals.map(({ data }) => data?.id),
-      })
-      console.log(task)
-    } catch (e) {
-      console.error(e)
-    }
-
-    setIsLoading(false)
-  }, [])
+      setIsLoading(false)
+    },
+    [form, setForm, formDefinition, setIsLoading]
+  )
 
   return (
-    <form className="flex flex-col gap-4 py-10" onSubmit={onSubmit}>
+    <form
+      className="flex flex-col gap-4 py-10"
+      onSubmit={onSubmit}
+      ref={formRef}
+    >
       {formDefinition.map((field) => (
         <Field
           key={field.name}
