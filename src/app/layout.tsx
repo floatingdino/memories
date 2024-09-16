@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import "@/styles/main.css"
 import { cookies } from "next/headers"
-import { TASK_ID_COOKIE } from "./tasks/[id]/const"
+import { TASK_ID_COOKIE } from "./(game)/tasks/[id]/const"
 import Link from "next/link"
 import { NavBar } from "./NavBar"
 
@@ -17,13 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex min-h-screen flex-col">
-        {children}
-        <div className="grow" />
-        {cookies().has(TASK_ID_COOKIE) && (
-          <NavBar task={cookies().get(TASK_ID_COOKIE)!.value} />
-        )}
-      </body>
+      <body className="flex min-h-screen flex-col">{children}</body>
     </html>
   )
 }
