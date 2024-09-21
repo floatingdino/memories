@@ -8,13 +8,7 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: [
-        "SF Pro Text",
-        "ui-sans-serif",
-        "system-ui",
-        "Segoe UI",
-        "sans-serif",
-      ],
+      sans: ["SF Pro Text", "ui-sans-serif", "system-ui", "Segoe UI", "sans-serif"],
       serif: ["Georgia", "ui-serif", "serif"],
       monospace: ["SF Mono", "monospace"],
     },
