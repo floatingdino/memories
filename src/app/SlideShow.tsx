@@ -10,12 +10,15 @@ import useSWR from "swr"
 const SLIDE_DURATION = 15_000
 
 export default function Slideshow() {
-  const { data, mutate } = useSWR<any>("memories", (table: string) =>
-    supabase
-      .from(table)
-      .select("*")
-      .returns<any>()
-      .then(({ data }) => data)
+  const { data, mutate } = useSWR<any>(
+    "memories",
+    (table: string) =>
+      supabase
+        .from(table)
+        .select("*")
+        .returns<any>()
+        .then(({ data }) => data),
+    { refreshWhenHidden: true }
   )
 
   const [currentOffset, setCurrentOffset] = useState(0)

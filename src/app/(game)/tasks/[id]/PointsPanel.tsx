@@ -9,16 +9,11 @@ import { GroupPanel } from "../GroupPanel"
 
 export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
   const [completions, setCompletions] = useState(
-    Object.fromEntries(
-      goals.map((goal) => [goal.id, goal.completions.toString()])
-    )
+    Object.fromEntries(goals.map((goal) => [goal.id, goal.completions.toString()]))
   )
 
   const currentPoints = Object.entries(completions).reduce(
-    (acc, [goal, completions]) =>
-      acc +
-      goals.find((g) => g.id === parseInt(goal))!.points *
-        parseInt(completions),
+    (acc, [goal, completions]) => acc + goals.find((g) => g.id === parseInt(goal))!.points * parseInt(completions),
     0
   )
 
@@ -33,7 +28,7 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
     const timeout = setTimeout(
       () =>
         Object.entries(completions).forEach(([goal, completions]) => {
-          supabase.from("goals").update({ completions }).eq("id", goal)
+          supabase.from("goals").update({ completions }).eq("id", goal).then(console.log)
         }),
       1500
     )
@@ -48,10 +43,7 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
       </H5>
       <GroupPanel>
         {goals.map((goal) => (
-          <div
-            key={goal.id}
-            className="-mb-3 -mr-2 -mt-3 flex items-center gap-1"
-          >
+          <div key={goal.id} className="-mb-3 -mr-2 -mt-3 flex items-center gap-1">
             <H5>{goal.description}</H5>
             <div className="grow" />
             <H5 as="div">&times;</H5>

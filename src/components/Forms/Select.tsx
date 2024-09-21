@@ -3,15 +3,10 @@ import clsx from "clsx"
 import { InputEl } from "./styles"
 import { SelectProps } from "./types/Form"
 
-export const Select = ({
-  className,
-  children,
-  placeholder,
-  ...props
-}: SelectProps) => {
+export const Select = ({ className, children, placeholder, ...props }: SelectProps) => {
   return (
     <div className={clsx(className, "bg-paper-white relative flex")}>
-      <ChevronDownIcon className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 lg:right-5" />
+      <ChevronDownIcon className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-black lg:right-5" />
       <InputEl as="select" {...props}>
         {placeholder && (
           <option value="" disabled>
