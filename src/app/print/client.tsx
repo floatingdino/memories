@@ -70,10 +70,10 @@ const Description = spc.Text`
 
 const TaskSection = ({ task }: { task: Task & { playerCode: string; setupCode: string } }) => {
   return (
-    <TaskWrapper>
+    <TaskWrapper wrap={false}>
       <Row style={{}}>
         <View style={{ width: 0, flexGrow: 1, paddingRight: 20 }}>
-          <PH1 style={{ marginBottom: 6 }}>{task.name}</PH1>
+          <PH1 style={{ marginBottom: 6 }}> {task.name}</PH1>
           <P>{task.description}</P>
         </View>
         <View style={{ width: 110, flexShrink: 0, marginTop: -10 }}>
@@ -98,7 +98,7 @@ const TaskSection = ({ task }: { task: Task & { playerCode: string; setupCode: s
 }
 
 const InfoSection = ({ setupCode }: { setupCode: string }) => (
-  <TaskWrapper>
+  <TaskWrapper wrap={false}>
     <Row style={{ height: "100%" }}>
       <View style={{ width: 0, flexGrow: 1 }}>
         <PH2 style={{ marginBottom: 8 }}>Welcome to Meet &amp; Mischief</PH2>
@@ -125,10 +125,15 @@ const TASKS_PER_PAGE = 8
 
 const Pg = spc.Page`
   padding-bottom: 6mm;
+  padding-top: 3mm;
+`
+
+const Rel = spc.View`
+  position: relative;
 `
 
 const ROW_WIDTH = 2
-const MARKS = Array(ROW_WIDTH + TASKS_PER_PAGE + TASKS_PER_PAGE / ROW_WIDTH)
+const MARKS = Array(1 + ROW_WIDTH + TASKS_PER_PAGE + TASKS_PER_PAGE / ROW_WIDTH)
   .fill(0)
   .map((_, i) => {
     const y = Math.floor(i / (ROW_WIDTH + 1))
@@ -190,42 +195,50 @@ export default function PrintClient({
             return (
               <Fragment key={i}>
                 <Pg>
-                  <Marks />
-                  <Row style={{ height: "100%", flexWrap: "wrap", position: "relative" }}>
-                    {t.map((task) => (
-                      <InfoSection key={task.id} setupCode={task.setupCode} />
-                    ))}
-                  </Row>
+                  <Rel>
+                    <Marks />
+                    <Row
+                      style={{ height: "100%", flexWrap: "wrap", flexDirection: "row-reverse", position: "relative" }}
+                    >
+                      {t.map((task) => (
+                        <InfoSection key={task.id} setupCode={task.setupCode} />
+                      ))}
+                    </Row>
+                  </Rel>
                 </Pg>
                 <Pg>
-                  <Marks />
-                  <Row style={{ height: "100%", flexWrap: "wrap", position: "relative" }}>
-                    {t.map((task) => (
-                      <TaskSection key={task.id} task={task} />
-                    ))}
-                  </Row>
+                  <Rel>
+                    <Marks />
+                    <Row style={{ height: "100%", flexWrap: "wrap", position: "relative" }}>
+                      {t.map((task) => (
+                        <TaskSection key={task.id} task={task} />
+                      ))}
+                    </Row>
+                  </Rel>
                 </Pg>
               </Fragment>
             )
           })}
         <Pg>
-          <Marks />
-          <Row style={{ height: "100%", flexWrap: "wrap", position: "relative" }}>
-            {prizes.map((prize) => (
-              <TaskWrapper key={prize.id} style={{ paddingRight: "5mm" }}>
-                <PH1 style={{ marginBottom: 6 }}>Congrats! You Won!</PH1>
-                <PH2 style={{ marginBottom: 6 }}>{prize.name}:</PH2>
-                <P style={{ marginBottom: 12 }}>{prize.description}</P>
-                <Goal>Contact Sam on 0413 003 813 to redeem</Goal>
-                <Grow />
-                <Description style={{ textTransform: "uppercase" }}>
-                  all prizes are subject to interpretation and negotiation. speak with your authorised prize dealer for
-                  more information.
-                </Description>
-                <Watermark>s&times;30</Watermark>
-              </TaskWrapper>
-            ))}
-          </Row>
+          <Rel>
+            <Marks />
+            <Row style={{ height: "100%", flexWrap: "wrap", position: "relative" }}>
+              {prizes.map((prize) => (
+                <TaskWrapper key={prize.id} style={{ paddingRight: "5mm" }}>
+                  <PH1 style={{ marginBottom: 6 }}>Congrats! You Won!</PH1>
+                  <PH2 style={{ marginBottom: 6 }}>{prize.name}:</PH2>
+                  <P style={{ marginBottom: 12 }}>{prize.description}</P>
+                  <Goal>Contact Sam on 0413 003 813 to redeem</Goal>
+                  <Grow />
+                  <Description style={{ textTransform: "uppercase" }}>
+                    all prizes are subject to interpretation and negotiation. speak with your authorised prize dealer
+                    for more information.
+                  </Description>
+                  <Watermark>s&times;30</Watermark>
+                </TaskWrapper>
+              ))}
+            </Row>
+          </Rel>
         </Pg>
       </Document>
     </PDFViewer>
