@@ -8,6 +8,7 @@ import { ChangeEventHandler, useCallback, useLayoutEffect, useMemo, useState } f
 import useSWR from "swr"
 import { useSearchParams } from "next/navigation"
 import Field from "@/components/Forms"
+import { FormBGManager } from "@/components/FormBGManager"
 
 const LeaderboardGuest = ({ guest, showName }: any) => {
   const { id, name, task, points, totalGuesses, correctGuesses, incorrectGuesses } = guest
@@ -168,6 +169,7 @@ export default function Leaderboard() {
   return (
     <Container>
       <div className="py-10">
+        <FormBGManager />
         {orderedGuessesByProminence.length > 0 && (
           <>
             <H5 className="mb-2">Most guessed tasks:</H5>

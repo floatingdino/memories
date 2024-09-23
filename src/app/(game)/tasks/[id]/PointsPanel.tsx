@@ -38,9 +38,7 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
 
   return (
     <>
-      <H5 className="mb-2 flex justify-between opacity-80">
-        Current Points: <strong>{currentPoints}</strong>
-      </H5>
+      <H5 className="mb-2 flex opacity-80">Your Tasks:</H5>
       <GroupPanel>
         {goals.map((goal) => (
           <div key={goal.id} className="-mb-3 -mr-2 -mt-3 flex items-center gap-1">
@@ -58,6 +56,7 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
           </div>
         ))}
       </GroupPanel>
+      <H4 className="mb-5 mt-3 text-right">Total Points: {currentPoints}</H4>
       {/* <div className="rounded-md bg-white px-3">
       </div> */}
     </>

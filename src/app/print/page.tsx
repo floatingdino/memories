@@ -1,5 +1,6 @@
 import supabase from "@/utils/supabaseClient"
-import PrintClient from "./client"
+import dynamic from "next/dynamic"
+// import PrintClient from "./client"
 import qrc from "qrcode"
 
 // const WEB_ROOT = process.env.NEXT_PUBLIC_VERCEL_URL
@@ -7,6 +8,8 @@ import qrc from "qrcode"
 //   : "http://localhost:3000"
 
 const WEB_ROOT = "memories.samhaakman.com"
+
+const PrintClient = dynamic(() => import("./client"), { ssr: false })
 
 export default async function Print() {
   const { data: _tasks } = await supabase.from("tasks").select(`

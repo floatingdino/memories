@@ -9,11 +9,12 @@ import { FC } from "react"
 import { Guess } from "@/types/Guess"
 
 export const TaskPanel: FC<{
+  title?: string
   id: number | string
   tasks: any[]
   guests: any[]
   guesses?: Guess
-}> = ({ id, tasks, guests, guesses: _guesses }) => {
+}> = ({ title = "Guess a task:", id, tasks, guests, guesses: _guesses }) => {
   const [recordId, setRecordId] = useState(_guesses?.id)
   const [guesses, setGuesses] = useState(_guesses?.guess || {})
 
@@ -40,10 +41,10 @@ export const TaskPanel: FC<{
 
   return (
     <>
-      <H5 className="mb-2 mt-5 opacity-80">Guess a task:</H5>
+      <H5 className="mb-2 mt-5 opacity-80">{title}</H5>
 
       <GroupPanel>
-        {tasks.map((task) => (
+        {tasks.map((task, i) => (
           <div key={task.id} className="-mb-3 -mr-2 -mt-3 flex items-center">
             <H5 className="capitalize">{task.name}</H5>
             <div className="grow" />

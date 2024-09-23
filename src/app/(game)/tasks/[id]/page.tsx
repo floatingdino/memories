@@ -14,10 +14,7 @@ import { GroupPanel } from "../GroupPanel"
 
 export default async function TaskHome({ params }: { params: { id: string } }) {
   const { id } = params
-  if (
-    cookies().has(TASK_ID_COOKIE) &&
-    cookies().get(TASK_ID_COOKIE)?.value != id
-  ) {
+  if (cookies().has(TASK_ID_COOKIE) && cookies().get(TASK_ID_COOKIE)?.value != id) {
     throw new Error("Not your task")
   }
   const { data: tasks } = await supabase
@@ -40,34 +37,33 @@ export default async function TaskHome({ params }: { params: { id: string } }) {
     notFound()
   }
 
-  const [{ data: allTasks }, { data: allGuests }, { data: allGuesses }] =
-    await Promise.all([
-      supabase.from("tasks").select("id, name").order("id"),
-      supabase.from("guests").select("id, name, costume"),
-      supabase
-        .from("guesses")
-        .select("id, guest, guess")
-        .eq("guest", id)
-        .maybeSingle(),
-    ])
+  const [{ data: allTasks }, { data: allGuests }, { data: allGuesses }] = await Promise.all([
+    supabase.from("tasks").select("id, name, non_player_task").order("id"),
+    supabase.from("guests").select("id, name, costume"),
+    supabase.from("guesses").select("id, guest, guess").eq("guest", id).maybeSingle(),
+  ])
+
+  const specialTasks = allTasks?.filter((task) => task.non_player_task)
+  const regularTasks = allTasks?.filter((task) => !task.non_player_task)
 
   return (
     <Container className="py-10">
       <FormBGManager />
       {!cookies().has(TASK_ID_COOKIE) && <CookieSetter id={id} />}
       <H1 className="mb-5">{task.name}</H1>
-      <H5 className="mb-2 opacity-80">Goal:</H5>
+      <H5 className="mb-2 opacity-80">Your Goal:</H5>
       <GroupPanel className="mb-5">
         <P>{task.description}</P>
       </GroupPanel>
       <PointsPanel goals={task.goals.sort((a, b) => a.id - b.id)} />
-
       <TaskPanel
+        title="Vote for Special Accolades"
         id={id!}
-        tasks={allTasks!}
+        tasks={specialTasks!}
         guests={allGuests!}
         guesses={allGuesses!}
       />
+      <TaskPanel id={id!} tasks={regularTasks!} guests={allGuests!} guesses={allGuesses!} />
     </Container>
   )
 }
