@@ -172,14 +172,21 @@ const Marks = () => {
     )
 }
 
-export default function PrintClient({ tasks }: { tasks: (Task & { playerCode: string; setupCode: string })[] }) {
+export default function PrintClient({
+  tasks,
+  prizes,
+}: {
+  tasks: (Task & { playerCode: string; setupCode: string })[]
+  prizes: any[]
+}) {
+  const regularTasks = tasks.filter((task) => !task.non_player_task)
   return (
     <PDFViewer className="h-screen w-full">
       <Document style={{ fontFamily: "SF Pro" }}>
-        {Array(Math.ceil(tasks.length / TASKS_PER_PAGE))
+        {Array(Math.ceil(regularTasks.length / TASKS_PER_PAGE))
           .fill(0)
           .map((_, i) => {
-            const t = tasks.slice(i * TASKS_PER_PAGE, i * TASKS_PER_PAGE + TASKS_PER_PAGE)
+            const t = regularTasks.slice(i * TASKS_PER_PAGE, i * TASKS_PER_PAGE + TASKS_PER_PAGE)
             return (
               <Fragment key={i}>
                 <Pg>
@@ -201,6 +208,25 @@ export default function PrintClient({ tasks }: { tasks: (Task & { playerCode: st
               </Fragment>
             )
           })}
+        <Pg>
+          <Marks />
+          <Row style={{ height: "100%", flexWrap: "wrap", position: "relative" }}>
+            {prizes.map((prize) => (
+              <TaskWrapper key={prize.id} style={{ paddingRight: "5mm" }}>
+                <PH1 style={{ marginBottom: 6 }}>Congrats! You Won!</PH1>
+                <PH2 style={{ marginBottom: 6 }}>{prize.name}:</PH2>
+                <P style={{ marginBottom: 12 }}>{prize.description}</P>
+                <Goal>Contact Sam on 0413 003 813 to redeem</Goal>
+                <Grow />
+                <Description style={{ textTransform: "uppercase" }}>
+                  all prizes are subject to interpretation and negotiation. speak with your authorised prize dealer for
+                  more information.
+                </Description>
+                <Watermark>s&times;30</Watermark>
+              </TaskWrapper>
+            ))}
+          </Row>
+        </Pg>
       </Document>
     </PDFViewer>
   )

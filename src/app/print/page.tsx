@@ -12,16 +12,20 @@ const WEB_ROOT = "memories.samhaakman.com"
 const PrintClient = dynamic(() => import("./client"), { ssr: false })
 
 export default async function Print() {
-  const { data: _tasks } = await supabase.from("tasks").select(`
+  const [{ data: _tasks }, { data: prizes }] = await Promise.all([
+    supabase.from("tasks").select(`
     id,
     name,
     description,
+    non_player_task,
     goals (
       id,
       description,
       points
     )
-  `)
+  `),
+    supabase.from("prizes").select(`id, name, description`),
+  ])
 
   const tasks = await Promise.all(
     _tasks!.map(async (task: any) => {
@@ -36,5 +40,5 @@ export default async function Print() {
     })
   )
 
-  return <PrintClient tasks={tasks as any[]} />
+  return <PrintClient prizes={prizes!} tasks={tasks as any[]} />
 }

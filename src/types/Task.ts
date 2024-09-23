@@ -6,4 +6,5 @@ export type Task = {
   name: string
   description: string
   goals: Goal[]
+  non_player_task: boolean
 }
