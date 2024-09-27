@@ -1,10 +1,6 @@
 import supabase from "@/utils/supabaseClient"
 import SubmitTaskClient from "./client"
-
-export enum ERROR_CODES {
-  NO_TASK = "Submitting a guest requires a task",
-  TASK_FILLED = "This task is already filled. Did you scan the wrong QR code?",
-}
+import { ERROR_CODES } from "./errorCodes"
 
 export default async function SubmitTask({ searchParams }) {
   console.log(searchParams)

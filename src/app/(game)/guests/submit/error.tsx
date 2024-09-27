@@ -3,8 +3,8 @@
 import Container from "@/components/Container"
 import { H1 } from "@/styles/Type"
 import { useSearchParams } from "next/navigation"
-import { ERROR_CODES } from "./page"
 import Button from "@/components/Button"
+import { ERROR_CODES } from "./errorCodes"
 
 export default function Error({ error }: { error: Error }) {
   const searchParams = useSearchParams()
