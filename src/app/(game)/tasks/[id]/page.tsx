@@ -43,9 +43,6 @@ export default async function TaskHome({ params }: { params: { id: string } }) {
     supabase.from("guesses").select("id, guest, guess").eq("guest", id).maybeSingle(),
   ])
 
-  const specialTasks = allTasks?.filter((task) => task.non_player_task)
-  const regularTasks = allTasks?.filter((task) => !task.non_player_task)
-
   return (
     <Container className="py-10">
       <FormBGManager />
@@ -56,14 +53,7 @@ export default async function TaskHome({ params }: { params: { id: string } }) {
         <P>{task.description}</P>
       </GroupPanel>
       <PointsPanel goals={task.goals.sort((a, b) => a.id - b.id)} />
-      <TaskPanel
-        title="Vote for Special Accolades"
-        id={id!}
-        tasks={specialTasks!}
-        guests={allGuests!}
-        guesses={allGuesses!}
-      />
-      <TaskPanel id={id!} tasks={regularTasks!} guests={allGuests!} guesses={allGuesses!} />
+      <TaskPanel id={id!} tasks={allTasks!} guests={allGuests!} guesses={allGuesses!} />
     </Container>
   )
 }
