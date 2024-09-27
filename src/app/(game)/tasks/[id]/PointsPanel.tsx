@@ -9,7 +9,7 @@ import { GroupPanel } from "../GroupPanel"
 
 export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
   const [completions, setCompletions] = useState(
-    Object.fromEntries(goals.map((goal) => [goal.id, goal.completions.toString()]))
+    Object.fromEntries(goals.map((goal) => [goal.id, goal?.completions?.toString()]))
   )
 
   const currentPoints = Object.entries(completions).reduce(
@@ -46,12 +46,12 @@ export const PointsPanel: FC<{ goals: Goal[] }> = ({ goals }) => {
             <div className="grow" />
             <H5 as="div">&times;</H5>
             <Spinner
-              value={completions[goal.id].toString()}
-              options={Array(99)
+              value={completions?.[goal.id]?.toString()}
+              options={Array(100)
                 .fill(0)
                 .map((_, i) => ({ value: i.toString() }))}
               onChange={onChange(goal.id)}
-              className="shrink-0 rounded bg-gray-100 px-3 py-4 dark:bg-gray-900"
+              className="shrink-0 rounded bg-gray-100 px-3 py-0 dark:bg-gray-900"
             />
           </div>
         ))}

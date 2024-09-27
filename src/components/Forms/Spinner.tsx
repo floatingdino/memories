@@ -20,13 +20,14 @@ export const Spinner: FC<
   useLayoutEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
+        console.log(entries)
         for (const entry of entries) {
-          if (entry.isIntersecting) {
+          if (entry.isIntersecting && !!entry.target.getAttribute("data-value")) {
             onChange(entry.target.getAttribute("data-value")!)
           }
         }
       },
-      { threshold: 0.5, root: wrapperRef.current }
+      { threshold: 0.7, rootMargin: "0px 100% 0px 100%", root: wrapperRef.current }
     )
     const elements = wrapperRef.current?.querySelectorAll("div")
     elements?.forEach((el) => observer.observe(el))
@@ -44,18 +45,19 @@ export const Spinner: FC<
     <H5
       as="div"
       className={clsx(
-        "scrollbar-hidden relative flex touch-pan-y snap-y snap-mandatory flex-col overflow-auto text-right tabular-nums leading-[1]",
+        "scrollbar-hidden relative flex touch-pan-y snap-y snap-mandatory flex-col overflow-y-auto overflow-x-hidden overscroll-contain text-right tabular-nums leading-[1]",
         className
       )}
       style={{ height: "2.25rem" }}
       ref={wrapperRef}
       {...props}
     >
+      <span className="h-5 shrink-0" />
       {options.map(({ value: optionValue, label }, i) => (
         <div
           key={i}
           className={clsx("snap-center", value !== optionValue && "opacity-40")}
-          style={{ paddingBlock: "0.1875rem" }} //3px
+          style={{ paddingBlock: "0.1875rem", minWidth: 20 }} //3px
           data-value={optionValue}
         >
           {label ?? optionValue}

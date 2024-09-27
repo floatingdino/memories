@@ -58,7 +58,7 @@ export const TaskPanel: FC<{
                   label: name,
                 })),
               ]}
-              className="ml-1 rounded bg-gray-100 px-3 py-4 dark:bg-gray-900"
+              className="ml-1 rounded bg-gray-100 px-3 py-0 dark:bg-gray-900"
             />
           </div>
         ))}
