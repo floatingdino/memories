@@ -26,7 +26,7 @@ export const Spinner: FC<
           }
         }
       },
-      { threshold: 0.7, root: wrapperRef.current }
+      { threshold: 0.5, root: wrapperRef.current }
     )
     const elements = wrapperRef.current?.querySelectorAll("div")
     elements?.forEach((el) => observer.observe(el))
@@ -34,9 +34,7 @@ export const Spinner: FC<
   }, [])
 
   useEffect(() => {
-    const element = wrapperRef.current?.querySelector<HTMLElement>(
-      `div[data-value="${value}"]`
-    )
+    const element = wrapperRef.current?.querySelector<HTMLElement>(`div[data-value="${value}"]`)
     if (!element || !wrapperRef.current) {
       return
     }
@@ -46,7 +44,7 @@ export const Spinner: FC<
     <H5
       as="div"
       className={clsx(
-        "scrollbar-hidden relative flex snap-y snap-mandatory flex-col overflow-auto text-right tabular-nums leading-[1]",
+        "scrollbar-hidden relative flex touch-pan-y snap-y snap-mandatory flex-col overflow-auto text-right tabular-nums leading-[1]",
         className
       )}
       style={{ height: "2.25rem" }}

@@ -1,21 +1,14 @@
 import clsx from "clsx"
-import { Children } from "react"
-import { HTMLAttributes } from "react"
-import { FC } from "react"
-import { ReactNode } from "react"
+import { Children, HTMLAttributes, FC, ReactNode } from "react"
 
-export const GroupPanel: FC<
-  { children: ReactNode } & HTMLAttributes<HTMLDivElement>
-> = ({ children: _children, className, ...props }) => {
+export const GroupPanel: FC<{ children: ReactNode } & HTMLAttributes<HTMLDivElement>> = ({
+  children: _children,
+  className,
+  ...props
+}) => {
   const children = Children.toArray(_children)
   return (
-    <div
-      className={clsx(
-        "rounded-md bg-white px-3 text-black dark:bg-black dark:text-white",
-        className
-      )}
-      {...props}
-    >
+    <div className={clsx("rounded-md bg-white px-3 text-black dark:bg-black dark:text-white", className)} {...props}>
       {children.map((child, i) => (
         <div className="group pt-4" key={i}>
           {child}

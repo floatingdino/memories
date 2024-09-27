@@ -3,12 +3,13 @@
 import Container from "@/components/Container"
 import { H1, H4, H5 } from "@/styles/Type"
 import supabase from "@/utils/supabaseClient"
-import { GroupPanel } from "../tasks/GroupPanel"
 import { ChangeEventHandler, useCallback, useLayoutEffect, useMemo, useState } from "react"
 import useSWR from "swr"
 import { useSearchParams } from "next/navigation"
 import Field from "@/components/Forms"
 import { FormBGManager } from "@/components/FormBGManager"
+
+import { GroupPanel } from "../tasks/GroupPanel"
 
 const LeaderboardGuest = ({ guest, showName }: any) => {
   const { id, name, task, points, totalGuesses, correctGuesses, incorrectGuesses } = guest
@@ -24,7 +25,7 @@ const LeaderboardGuest = ({ guest, showName }: any) => {
   ]
   return (
     <div key={id}>
-      <div className="mb-2 flex">
+      <div className="mb-2 mt-3 flex">
         {showName && (
           <>
             <H5>{name}</H5>
@@ -74,6 +75,7 @@ export default function Leaderboard() {
           task (
             id,
             name,
+            non_player_task,
             goals (
               points,
               completions
@@ -90,42 +92,53 @@ export default function Leaderboard() {
   )
 
   const tasks = useMemo(() => {
-    return allTasks?.map((_task) => {
-      const guest = guests?.find(({ id }) => id === _task.guests?.[0]?.id)
-      if (!guest) {
-        return { task: _task, id: _task.id, points: 0, totalGuesses: 0, correctGuesses: 0, incorrectGuesses: 0 }
-      }
-      const { task, id } = guest
-      const points = task?.goals?.reduce?.((acc, goal) => {
-        return acc + goal.points * goal.completions
-      }, 0)
-      const guess: Record<string, string> = task?.guesses?.guess || {}
-
-      const totalGuesses = Object.values(guess).filter(Boolean).length
-      const correctGuesses = Object.entries(guess).filter(([guessTask, guessGuest]) => {
-        const taskGuest = guests.find(({ id }) => id.toString() === guessGuest.toString())
-        if (!!guessGuest) {
-          console.log(guests)
-          console.log(taskGuest, guessGuest, guessTask)
+    return (
+      allTasks?.map((_task) => {
+        const guest = guests?.find(({ id }) => id === _task.guests?.[0]?.id)
+        if (!guest) {
+          return {
+            task: _task,
+            id: _task.id,
+            points: 0,
+            totalGuesses: 0,
+            correctGuesses: 0,
+            incorrectGuesses: 0,
+            combinedPoints: 0,
+            identified: Infinity,
+          }
         }
-        return taskGuest?.task?.id?.toString() === guessTask
-      })
+        const { task, id } = guest
+        const points = task?.goals?.reduce?.((acc, goal) => {
+          return acc + goal.points * goal.completions
+        }, 0)
+        const guess: Record<string, string> = task?.guesses?.guess || {}
 
-      const identified = guests?.reduce((acc, guest) => {
-        const correctlyIdentified = guest.task?.guesses?.guess?.[id.toString()] === task.id.toString()
-        return acc + (correctlyIdentified ? 1 : 0)
-      }, 0)
+        const totalGuesses = Object.values(guess).filter(Boolean).length
+        const correctGuesses = Object.entries(guess).filter(([guessTask, guessGuest]) => {
+          const taskGuest = guests.find(({ id: guestId }) => guestId.toString() === guessGuest.toString())
+          if (!!guessGuest) {
+            console.log(guests)
+            console.log(taskGuest, guessGuest, guessTask)
+          }
+          return taskGuest?.task?.id?.toString() === guessTask
+        })
 
-      return {
-        ...guest,
-        points,
-        totalGuesses,
-        correctGuesses: correctGuesses.length,
-        incorrectGuesses: totalGuesses - correctGuesses.length,
-        combinedPoints: points + correctGuesses.length,
-        identified,
-      }
-    })
+        const identified = guests?.reduce((acc, guest) => {
+          const correctlyIdentified = guest.task?.guesses?.guess?.[task.id.toString()] === guest.id.toString()
+          return acc + (correctlyIdentified ? 1 : 0)
+        }, 0)
+
+        return {
+          ...guest,
+          points,
+          totalGuesses,
+          correctGuesses: correctGuesses.length,
+          incorrectGuesses: totalGuesses - correctGuesses.length,
+          combinedPoints: points + correctGuesses.length,
+          identified,
+        }
+      }) || []
+    )
   }, [guests, allTasks])
 
   useLayoutEffect(() => {
@@ -154,44 +167,51 @@ export default function Leaderboard() {
     return () => {
       channels.forEach((c) => c.unsubscribe())
     }
-  }, [])
+  }, [mutate, updateTasks])
 
   const onChange = useCallback<ChangeEventHandler<HTMLInputElement>>((e) => {
     setSort(e.currentTarget.value)
   }, [])
 
-  const sortedGuests = useMemo(() => tasks?.sort?.((a, b) => b[sort] - a[sort]), [tasks, sort])
+  const sortedGuests = useMemo(
+    () => tasks?.filter(({ task }) => !task.non_player_task)?.sort?.((a, b) => b[sort] - a[sort]),
+    [tasks, sort]
+  )
 
   const orderedGuessesByProminence = useMemo(() => {
-    const tasks: Record<number, number> = Object.fromEntries(allTasks?.map((task) => [task.id, 0]) || [])
+    const _tasks: Record<number, number> = Object.fromEntries(allTasks?.map((task) => [task.id, 0]) || [])
     guests?.forEach((guest) => {
       const guess = guest.task?.guesses?.guess || {}
       Object.entries(guess)
         .filter(([_k, v]) => !!v)
         .forEach(([taskId]) => {
-          tasks[taskId]++
+          _tasks[taskId]++
         })
     })
 
-    return Object.entries(tasks).sort((a, b) => b[1] - a[1])
-  }, [tasks, guests])
+    return Object.entries(_tasks).sort((a, b) => b[1] - a[1])
+  }, [tasks, guests, allTasks])
 
   const getMostProminentGuestForRole = useCallback(
     (roleId: number) => {
       const [roleEntry] = Object.entries<number>(
-        guests?.reduce((acc, guest) => {
+        (guests || []).reduce((acc, guest) => {
           const favoured = guest?.task?.guesses?.guess?.[BEST_DRESSED_ID]
-          acc[favoured] = acc[favoured] ? acc[favoured] + 1 : 1
-        }, {})
+          acc[favoured] = (acc[favoured] || 0) + 1
+          return acc
+        }, {}) || {}
       ).sort((a, b) => b[1] - a[1])
-      return guests?.find(({ id }) => id === roleEntry[0])
+
+      return guests?.find(({ id }) => id.toString() === roleEntry?.[0])
     },
     [guests]
   )
 
   const prizes = useMemo(() => {
-    const [overall] = tasks?.sort((a, b) => a.combinedPoints - b.combinedPoints)
-    const [bestSpy] = tasks?.sort((a, b) => a.correctGuesses - b.correctGuesses)
+    const _overall = tasks?.sort((a, b) => b.combinedPoints - a.combinedPoints)
+
+    const [overall] = _overall
+    const [bestSpy] = tasks?.sort((a, b) => b.correctGuesses - a.correctGuesses)
 
     const [incognito] = tasks?.filter((task) => !!task.id)?.sort((a, b) => b.identified - a.identified)
 
@@ -199,8 +219,15 @@ export default function Leaderboard() {
     const partyStarter = getMostProminentGuestForRole(PARTY_STARTER_ID)
     const mostMischievous = getMostProminentGuestForRole(MOST_MISCHIEVOUS_ID)
 
-    return { overall, bestDressed, bestSpy, partyStarter, incognito, mostMischievous }
-  }, [])
+    return {
+      overall,
+      "Best Dressed": bestDressed,
+      "Best Spy": bestSpy,
+      "Party Starter": partyStarter,
+      incognito,
+      "Most Mischievous": mostMischievous,
+    }
+  }, [tasks, getMostProminentGuestForRole])
 
   return (
     <Container>
@@ -211,7 +238,7 @@ export default function Leaderboard() {
             <H5 className="mb-2">Most guessed tasks:</H5>
             <GroupPanel className="mb-5">
               {orderedGuessesByProminence.slice(0, 3).map(([id, count]) => {
-                const task = allTasks.find((task) => task.id === parseInt(id))
+                const task = allTasks?.find((t) => t.id === parseInt(id))
                 if (!task) {
                   return null
                 }
@@ -234,7 +261,7 @@ export default function Leaderboard() {
                 .reverse()
                 .slice(0, 3)
                 .map(([id, count]) => {
-                  const task = allTasks.find((task) => task.id === parseInt(id))
+                  const task = allTasks?.find((t) => t.id === parseInt(id))
                   if (!task) {
                     return null
                   }
@@ -253,8 +280,8 @@ export default function Leaderboard() {
           Object.entries(prizes).map(([prize, guest]) => (
             <GroupPanel key={prize}>
               <H4>{prize}</H4>
-              <H5>{guest.name}</H5>
-              <H5>{guest.task.name}</H5>
+              <H5>{guest?.name}</H5>
+              <H5>{guest?.task?.name}</H5>
             </GroupPanel>
           ))}
         {!!params.get("showLeaderboard") && (
@@ -273,7 +300,7 @@ export default function Leaderboard() {
             />
             <div className="flex flex-col gap-2">
               {sortedGuests?.map((guest) => (
-                <LeaderboardGuest showName={!!params.get("showName")} key={guest.id} guest={guest} />
+                <LeaderboardGuest showName={!!params.get("showName")} key={guest.task.id} guest={guest} />
               ))}
             </div>
           </>
