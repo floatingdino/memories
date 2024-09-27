@@ -3,7 +3,7 @@
 import Container from "@/components/Container"
 import { H1, H4, H5 } from "@/styles/Type"
 import supabase from "@/utils/supabaseClient"
-import { ChangeEventHandler, useCallback, useLayoutEffect, useMemo, useState } from "react"
+import { ChangeEventHandler, Fragment, useCallback, useLayoutEffect, useMemo, useState } from "react"
 import useSWR from "swr"
 import { useSearchParams } from "next/navigation"
 import Field from "@/components/Forms"
@@ -92,6 +92,7 @@ export default function Leaderboard() {
   )
 
   const tasks = useMemo(() => {
+    const nonPlayerTasks = allTasks?.filter((task) => task.non_player_task)?.map(({ id }) => id) || []
     return (
       allTasks?.map((_task) => {
         const guest = guests?.find(({ id }) => id === _task.guests?.[0]?.id)
@@ -113,7 +114,9 @@ export default function Leaderboard() {
         }, 0)
         const guess: Record<string, string> = task?.guesses?.guess || {}
 
-        const totalGuesses = Object.values(guess).filter(Boolean).length
+        const totalGuesses = Object.entries(guess).filter(
+          ([task, guess]) => !!guess && !nonPlayerTasks.includes(task)
+        ).length
         const correctGuesses = Object.entries(guess).filter(([guessTask, guessGuest]) => {
           const taskGuest = guests.find(({ id: guestId }) => guestId.toString() === guessGuest.toString())
           if (!!guessGuest) {
@@ -196,7 +199,8 @@ export default function Leaderboard() {
     (roleId: number) => {
       const [roleEntry] = Object.entries<number>(
         (guests || []).reduce((acc, guest) => {
-          const favoured = guest?.task?.guesses?.guess?.[BEST_DRESSED_ID]
+          const favoured = guest?.task?.guesses?.guess?.[roleId.toString()]
+          console.log(favoured, guest?.task?.guesses, roleId)
           acc[favoured] = (acc[favoured] || 0) + 1
           return acc
         }, {}) || {}
@@ -278,15 +282,17 @@ export default function Leaderboard() {
         )}
         {!!params.get("showPrizes") &&
           Object.entries(prizes).map(([prize, guest]) => (
-            <GroupPanel key={prize}>
-              <H4>{prize}</H4>
-              <H5>{guest?.name}</H5>
-              <H5>{guest?.task?.name}</H5>
-            </GroupPanel>
+            <Fragment key={prize}>
+              <H4 className="mb-2 mt-5">{prize}</H4>
+              <GroupPanel key={prize}>
+                <H5>{guest?.name}</H5>
+                <H5>{guest?.task?.name}</H5>
+              </GroupPanel>
+            </Fragment>
           ))}
         {!!params.get("showLeaderboard") && (
           <>
-            <div className="mb-2">
+            <div className="mb-2 mt-5">
               <H1>Leaderboard</H1>
             </div>
             <Field
