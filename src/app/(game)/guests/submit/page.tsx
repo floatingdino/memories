@@ -9,7 +9,9 @@ export default async function SubmitTask({ searchParams }) {
     throw new Error(ERROR_CODES.NO_TASK)
   }
 
-  const { data } = await supabase.from("guests").select("id").eq("task", searchParams.task).maybeSingle()
+  const { data } = await supabase.from("guests").select("id").eq("task", Number(searchParams.task)).maybeSingle()
+
+  console.log(data)
 
   if (data) {
     throw new Error(ERROR_CODES.TASK_FILLED)

@@ -20,9 +20,8 @@ export const Spinner: FC<
   useLayoutEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        console.log(entries)
         for (const entry of entries) {
-          if (entry.isIntersecting && !!entry.target.getAttribute("data-value")) {
+          if (entry.isIntersecting) {
             onChange(entry.target.getAttribute("data-value")!)
           }
         }
@@ -52,7 +51,7 @@ export const Spinner: FC<
       ref={wrapperRef}
       {...props}
     >
-      <span className="h-5 shrink-0" />
+      <span className="h-10 shrink-0" />
       {options.map(({ value: optionValue, label }, i) => (
         <div
           key={i}
@@ -63,6 +62,7 @@ export const Spinner: FC<
           {label ?? optionValue}
         </div>
       ))}
+      <span className="h-10 shrink-0" />
     </H5>
   )
 }
