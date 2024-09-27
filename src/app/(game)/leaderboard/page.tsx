@@ -286,7 +286,6 @@ export default function Leaderboard() {
               <H4 className="mb-2 mt-5">{prize}</H4>
               <GroupPanel key={prize}>
                 <H5>{guest?.name}</H5>
-                <H5>{guest?.task?.name}</H5>
               </GroupPanel>
             </Fragment>
           ))}
