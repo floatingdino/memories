@@ -1,7 +1,7 @@
 "use client"
 
 import Container from "@/components/Container"
-import { H1, H5 } from "@/styles/Type"
+import { H1, H4, H5 } from "@/styles/Type"
 import supabase from "@/utils/supabaseClient"
 import { GroupPanel } from "../tasks/GroupPanel"
 import { ChangeEventHandler, useCallback, useLayoutEffect, useMemo, useState } from "react"
@@ -47,6 +47,9 @@ const LeaderboardGuest = ({ guest, showName }: any) => {
 }
 
 const SORT_OPTIONS = ["id", "points", "totalGuesses", "correctGuesses", "incorrectGuesses"]
+const BEST_DRESSED_ID = 45
+const PARTY_STARTER_ID = 46
+const MOST_MISCHIEVOUS_ID = 47
 
 export default function Leaderboard() {
   const params = useSearchParams()
@@ -108,12 +111,19 @@ export default function Leaderboard() {
         return taskGuest?.task?.id?.toString() === guessTask
       })
 
+      const identified = guests?.reduce((acc, guest) => {
+        const correctlyIdentified = guest.task?.guesses?.guess?.[id.toString()] === task.id.toString()
+        return acc + (correctlyIdentified ? 1 : 0)
+      }, 0)
+
       return {
         ...guest,
         points,
         totalGuesses,
         correctGuesses: correctGuesses.length,
         incorrectGuesses: totalGuesses - correctGuesses.length,
+        combinedPoints: points + correctGuesses.length,
+        identified,
       }
     })
   }, [guests, allTasks])
@@ -166,6 +176,32 @@ export default function Leaderboard() {
     return Object.entries(tasks).sort((a, b) => b[1] - a[1])
   }, [tasks, guests])
 
+  const getMostProminentGuestForRole = useCallback(
+    (roleId: number) => {
+      const [roleEntry] = Object.entries<number>(
+        guests?.reduce((acc, guest) => {
+          const favoured = guest?.task?.guesses?.guess?.[BEST_DRESSED_ID]
+          acc[favoured] = acc[favoured] ? acc[favoured] + 1 : 1
+        }, {})
+      ).sort((a, b) => b[1] - a[1])
+      return guests?.find(({ id }) => id === roleEntry[0])
+    },
+    [guests]
+  )
+
+  const prizes = useMemo(() => {
+    const [overall] = tasks?.sort((a, b) => a.combinedPoints - b.combinedPoints)
+    const [bestSpy] = tasks?.sort((a, b) => a.correctGuesses - b.correctGuesses)
+
+    const [incognito] = tasks?.filter((task) => !!task.id)?.sort((a, b) => b.identified - a.identified)
+
+    const bestDressed = getMostProminentGuestForRole(BEST_DRESSED_ID)
+    const partyStarter = getMostProminentGuestForRole(PARTY_STARTER_ID)
+    const mostMischievous = getMostProminentGuestForRole(MOST_MISCHIEVOUS_ID)
+
+    return { overall, bestDressed, bestSpy, partyStarter, incognito, mostMischievous }
+  }, [])
+
   return (
     <Container>
       <div className="py-10">
@@ -213,6 +249,14 @@ export default function Leaderboard() {
             </GroupPanel>
           </>
         )}
+        {!!params.get("showPrizes") &&
+          Object.entries(prizes).map(([prize, guest]) => (
+            <GroupPanel key={prize}>
+              <H4>{prize}</H4>
+              <H5>{guest.name}</H5>
+              <H5>{guest.task.name}</H5>
+            </GroupPanel>
+          ))}
         {!!params.get("showLeaderboard") && (
           <>
             <div className="mb-2">
