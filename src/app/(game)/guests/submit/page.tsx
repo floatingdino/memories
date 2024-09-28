@@ -1,4 +1,5 @@
 import supabase from "@/utils/supabaseClient"
+import { redirect } from "next/navigation"
 import SubmitTaskClient from "./client"
 import { ERROR_CODES } from "./errorCodes"
 
@@ -14,7 +15,7 @@ export default async function SubmitTask({ searchParams }) {
   console.log(data)
 
   if (data) {
-    throw new Error(ERROR_CODES.TASK_FILLED)
+    redirect(`/tasks/${searchParams.task}`)
   }
 
   return <SubmitTaskClient />
