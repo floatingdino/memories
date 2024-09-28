@@ -21,37 +21,22 @@ export default async function MemoryPage({ params }: any) {
     .eq("id", id)
     .single()
 
-  const { file, memory, rememberer, memory_type } = data!
+  const { file, memory, rememberer, memory_type } = data! || {}
 
   return (
     <Container className="py-10">
       <P as="nav" className="mb-5">
         <Link href="/memories">&#9664; Memories</Link>
       </P>
-      {file && (
-        <Image
-          src={getImageUrl(file)}
-          alt=""
-          width="705"
-          height="705"
-          className="mb-10"
-        />
-      )}
+      {file && <Image src={getImageUrl(file)} alt="" width="705" height="705" className="mb-10" />}
       <H2 as="blockquote" className="font-serif italic">
         &ldquo;{memory}&rdquo;
       </H2>
-      <P
-        as="cite"
-        className="mt-5 block text-right font-monospace uppercase not-italic"
-      >
+      <P as="cite" className="mt-5 block text-right font-monospace uppercase not-italic">
         &mdash; {rememberer}
       </P>
 
-      {(memory_type as any)?.name && (
-        <P className="mt-10 font-monospace">
-          Filed under: {(memory_type as any)?.name}
-        </P>
-      )}
+      {(memory_type as any)?.name && <P className="mt-10 font-monospace">Filed under: {(memory_type as any)?.name}</P>}
     </Container>
   )
 }
