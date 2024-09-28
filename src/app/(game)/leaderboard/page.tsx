@@ -197,14 +197,18 @@ export default function Leaderboard() {
 
   const getMostProminentGuestForRole = useCallback(
     (roleId: number) => {
-      const [roleEntry] = Object.entries<number>(
+      const roles = Object.entries<number>(
         (guests || []).reduce((acc, guest) => {
           const favoured = guest?.task?.guesses?.guess?.[roleId.toString()]
-          console.log(favoured, guest?.task?.guesses, roleId)
+          // console.log(favoured, guest?.task?.guesses, roleId)
           acc[favoured] = (acc[favoured] || 0) + 1
           return acc
         }, {}) || {}
-      ).sort((a, b) => b[1] - a[1])
+      )
+        .filter(([k]) => k && k !== "undefined")
+        .sort((a, b) => b[1] - a[1])
+      console.log(roles)
+      const [roleEntry] = roles
 
       return guests?.find(({ id }) => id.toString() === roleEntry?.[0])
     },
@@ -217,7 +221,8 @@ export default function Leaderboard() {
     const [overall] = _overall
     const [bestSpy] = tasks?.sort((a, b) => b.correctGuesses - a.correctGuesses)
 
-    const [incognito] = tasks?.filter((task) => !!task.id)?.sort((a, b) => b.identified - a.identified)
+    const _incognito = tasks?.filter((task) => !!task.name)?.sort((a, b) => b.identified - a.identified)
+    const [incognito] = _incognito
 
     const bestDressed = getMostProminentGuestForRole(BEST_DRESSED_ID)
     const partyStarter = getMostProminentGuestForRole(PARTY_STARTER_ID)
@@ -232,6 +237,8 @@ export default function Leaderboard() {
       "Most Mischievous": mostMischievous,
     }
   }, [tasks, getMostProminentGuestForRole])
+
+  console.log(prizes)
 
   return (
     <Container>
